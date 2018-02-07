@@ -16,13 +16,43 @@ class App extends React.Component {
   
   constructor(props) {
     super(props);
-    this.state = {users: [], messages: [], text: '', name: ''};
+    this.state = {
+      users: [],
+      messages: [],
+      text: '',
+      name: '',
+      typing: false
+
+    };
   }
 
 	componentDidMount() {
   	socket.on('message', message => this.messageReceive(message));
   	socket.on('update', ({users}) => this.chatUpdate(users));
+
+    socket.on('typingstart', _ => this.typingstart())
+    socket.on('typingstop', _ => this.typingstop())
 	}
+
+  onTypingStart(){
+    console.log('onTypingStart');
+    socket.emit('typingstart');
+  }
+
+  onTypingStop(){
+    console.log('onTypingStop');
+    socket.emit('typingstop');
+  }
+
+  typingstart(){
+    console.log('typing start');
+    this.setState({typing: true})
+
+  }
+  typingstop(){
+    console.log('tuping stop');
+    this.setState({typing: false});
+  }
 
 	messageReceive(message) {
   	const messages = [message, ...this.state.messages];
@@ -69,10 +99,15 @@ class App extends React.Component {
           <div className={styles.MessageWrapper}>
             <MessageList
               messages={this.state.messages}
+              typing = {this.state.typing}
             />
             <MessageForm
               onMessageSubmit={message => this.handleMessageSubmit(message)}
               name={this.state.name}
+              typing={this.state.typing}
+              onMessageStartTyping = { _ => this.onTypingStart()}
+              onMessageStopTyping = { _ => this.onTypingStop()}
+
             />
           </div>
         </div>

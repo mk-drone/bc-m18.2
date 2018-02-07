@@ -53,19 +53,24 @@ io.on('connection', function(socket) {
     });
   });
 
-  socket.on('typingstart', function(message){
+  socket.on('typingstart', function(){
     const {name} = userService.getUserById(socket.id);
-    socket.broadcast.emit('typingstart', {
+    socket.broadcast.emit('typingstart',{
       from: name
-    });
+    })
   });
 
-  socket.on('typingend', function(message){
+  socket.on('typingstop', function(){
     const {name} = userService.getUserById(socket.id);
-    socket.broadcast.emit('typingend', {
+    socket.broadcast.emit('typingstop',{
       from: name
-    });
-  });
+    })
+  })
+
+
+
+
+
 
 
 
